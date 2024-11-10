@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西南林业大学智慧校园地图</title>
+    <style>
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 调整标记上显示的楼名样式 */
+      .building-label {
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            padding: 2px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            top: -15px;
+        }
+
+      .marker-icon {
+            width: 40px;
+            height: 40px;
+            /* 禁止图片随地图缩放 */
+            transform: scale(1);
+            transform-origin: 0 0;
+        }
+    </style>
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: "4b8aa1f96c8ccdeec94b201bcd82227f",
+        };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=664b1caea51861913c34390bead7bd09"></script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=664b1caea51861913c34390bead7bd09&plugin=AMap.Driving,AMap.InfoWindow"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        const map = new AMap.Map('container', {
+            center: [102.758754,25.059994],
+            zoom: 15,
+            viewMode: '3D'
+        });
+
+        // 定位到中心
+        map.setCenter([102.758754,25.059994]);
+
+        function createMarkerAndInfoWindow(position, iconPath, buildingName) {
+            const icon = new AMap.Icon({
+                size: new AMap.Size(40, 40),
+                image: iconPath,
+                imageSize: new AMap.Size(60, 60),
+                // 为图标留出一些空间显示楼名
+                anchor: new AMap.Pixel(30, 60)
+            });
+            const marker = new AMap.Marker({
+                position: position,
+                icon: icon,
+                // 创建一个自定义的楼名标签
+                content: `<div><img src="${iconPath}" class="marker-icon" /><span class="building-label">${buildingName}</span></div>`
+            });
+            const infoContent = `<div>${getBuildingInfo(buildingName)}</div>`;
+            const infoWindow = new AMap.InfoWindow({
+                content: infoContent,
+                offset: new AMap.Pixel(0, -30)
+            });
+            marker.on('click', function () {
+                infoWindow.open(map, marker.getPosition());
+            });
+            map.add(marker);
+            return marker;
+        }
+
+        function getBuildingInfo(buildingName) {
+            switch (buildingName) {
+                case '第一教学楼':
+                    return '这是第一教学楼，是学生们汲取知识的重要场所。这里有宽敞明亮的教室和先进的教学设备，号称西林小布达拉宫';
+                case '第二教学楼':
+                    return '这是第二教学楼，离我们宿舍最近的教学楼，只需要提前十分钟起床';
+                case '第三教学楼':
+                    return '这是第三教学楼，离我们宿舍最远的教学楼，太远了，还好我有小电';
+                case '智华楼':
+                    return '这是智华楼，无敌豪华，西林也是好起来了';
+                case '图书馆北馆':
+                    return '这是图书馆北馆，知识的宝库。拥有丰富的藏书、舒适的阅读环境和先进的电子资源查询系统。';
+                case '第二图书馆':
+                    return '这是第二图书馆，除了收藏社会科学类图书外，还设有世界茶叶图书馆。';
+                case '土木楼':
+                    return '这是土木楼，科研与实践的基地。配备各种先进的实验设备，为师生提供良好的科研条件。';
+                case '第二食堂':
+                    return '这是食堂，美味的汇聚地。提供各种口味的美食，满足师生的饮食需求，还有台球室提供娱乐。';
+                case '11 栋宿舍':
+                    return '这是 11 栋宿舍楼，学生们的温馨港湾。提供舒适的居住环境，让学生们在学习之余能得到充分的休息。';
+                case '田径场':
+                    return '这是田径场，是同学们挥洒汗水、锻炼身体的好去处，经常举办各种体育赛事。';
+                case '体育馆':
+                    return '这是体育馆，里面有各种体育设施，如篮球场、羽毛球场，游泳馆等，是体育爱好者的乐园。';
+                case '第四食堂':
+                    return '这是第四食堂，提供丰富多样的美食，有独特的风味小吃，还有高校海底捞，健身房。';
+                case '菜鸟驿站':
+                    return '这是菜鸟驿站，同学们收取快递的地方，不过现在逐渐没落。';
+            }
+        }
+
+        const buildingData = [
+            { name: '第一教学楼', position: [102.758747, 25.060322], iconPath: 'DL.jpg' },
+            { name: '第二教学楼', position: [102.756891, 25.06154], iconPath: 'DL.jpg' },
+            { name: '第三教学楼', position: [102.755849, 25.057214], iconPath: 'DL.jpg' },
+            { name: '智华楼', position: [102.755145, 25.057327], iconPath: 'DL.jpg' },
+            { name: '图书馆北馆', position: [102.757948, 25.061483], iconPath: 'DL.jpg' },
+            { name: '第二图书馆', position: [102.757345, 25.056919], iconPath: 'DL.jpg' },
+            { name: '土木楼', position: [102.754603, 25.056794], iconPath: 'DL.jpg' },
+            { name: '第二食堂', position: [102.758069, 25.062612], iconPath: 'DL.jpg' },
+            { name: '11 栋宿舍', position: [102.755977, 25.061724], iconPath: 'DL.jpg' },
+            { name: '田径场', position: [102.761787, 25.062883], iconPath: 'DL.jpg' },
+            { name: '体育馆', position: [102.762177, 25.061441], iconPath: 'DL.jpg' },
+            { name: '第四食堂', position: [102.761667, 25.058607], iconPath: 'DL.jpg' },
+            { name: '菜鸟驿站', position: [102.76283, 25.060273], iconPath: 'DL.jpg' }
+        ];
+
+        buildingData.forEach(item => {
+            createMarkerAndInfoWindow(item.position, item.iconPath, item.name);
+        });
+
+         //驾车导航
+         AMap.plugin("AMap.Driving", function () {
+  var driving = new AMap.Driving({
+    map:map,
+    policy: 0, //驾车路线规划策略，0是速度优先的策略
+  });
+  var startLngLat = [102.752489,25.057857]; //起始点坐标一号门
+  var endLngLat = [102.756719,25.059741]; //终点坐标二号门
+  var opts = {
+    waypoints: [[102.757345, 25.056919]], //途经点第二图书馆
+  };
+  var opts = {
+    waypoints: [[102.761667, 25.058607]], //途经点第四食堂
+  };
+  var opts = {
+    waypoints: [[102.762177, 25.061441]], //途经点体育馆
+  };
+  var opts = {
+    waypoints: [[102.761787, 25.062883]], //途经点田径场
+  };
+  driving.search(startLngLat, endLngLat, opts, function (status, result) {
+    //status：complete 表示查询成功，no_data 为查询无结果，error 代表查询错误
+    //查询成功时，result 即为对应的驾车导航信息
+  });
+});
+  //绘制初始路径
+  var path = [];
+    path.push([102.752489,25.057857]);
+    path.push([102.757345, 25.056919]);
+    path.push([102.761667, 25.058607]);
+    path.push([102.762177, 25.061441]);
+    path.push([102.761787, 25.062883]);
+    path.push([102.756719,25.059741]);
+    map.plugin("AMap.DragRoute", function() {
+        route = new AMap.DragRoute(map, path, AMap.DrivingPolicy.LEAST_FEE); //构造拖拽导航类
+       route.search(); //查询导航路径并开启拖拽导航
+     });
+
+        // 异步加载控件
+        AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.Geolocation', 'AMap.ControlBar', 'AMap.HawkEye'], function () {
+            return new Promise((resolve, reject) => {
+                try {
+                    var toolbar = new AMap.ToolBar({
+                        position: { right: '10px', bottom: '200px' }
+                    });
+                    var Scale = new AMap.Scale({
+                        position: { right: '1000px', bottom: '50px' }
+                    });
+                    var HawkEye = new AMap.HawkEye({
+                        position: { right: '50px', bottom: '50px' }
+                    });
+                    var Geolocation = new AMap.Geolocation({
+                        position: { right: '1350px', bottom: '50px' }
+                    });
+                    var ControlBar = new AMap.ControlBar({
+                        position: { right: '10px', bottom: '600px' }
+                    });
+                    map.addControl(toolbar);
+                    map.addControl(Scale);
+                    map.addControl(Geolocation);
+                    map.addControl(ControlBar);
+                    map.addControl(HawkEye);
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }).then(() => {
+            // 在这里执行加载完成后的其他操作
+        }).catch((error) => {
+            console.error('插件加载失败：', error);
+        });
+    </script>
+</body>
+
+</html>
